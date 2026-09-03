@@ -375,7 +375,7 @@ in case hyperlink doesn’t work)</p>
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>NBA_Player_Stats &lt;- read.csv(&quot;18-19_NBA_Players_Stats.csv&quot;)</code></pre>
+<pre class="r"><code>NBA_Player_Stats &lt;- read.csv(&quot;https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Lab1/18-19_NBA_Players_Stats.csv&quot;)</code></pre>
 <pre class="r"><code>NBA_Players_Box_Score &lt;- select(NBA_Player_Stats, PLAYER, TEAM, PTS, REB, AST, STL, BLK)
 NBA_Players_Box_Score |&gt; 
   rename(

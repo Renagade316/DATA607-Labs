@@ -14,7 +14,7 @@ For this Lab I am looking at using a dataset of [NBA Players Stats from the 2018
 
 ```{r reading-the-dataset}
 library(dplyr)
-NBA_Player_Stats <- read.csv("18-19_NBA_Players_Stats.csv")
+NBA_Player_Stats <- read.csv("https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Lab1/18-19_NBA_Players_Stats.csv")
 
 ```
 
