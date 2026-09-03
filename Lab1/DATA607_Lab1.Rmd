@@ -1,0 +1,36 @@
+---
+title: "DATA607_Lab_1"
+output: html_document
+date: "2026-09-03"
+---
+
+## Lab 1 Approach Deliverable
+
+## Introduction:
+
+For this Lab I am looking at using a dataset of [NBA Players Stats from the 2018-2019 Regular Season](https://www.kaggle.com/datasets/terrycheng/201819-nba-players-stats){.uri}. For this dataset I will be creating a subset of just the data featuring only the player, team, points, rebounds and assists. I will rename the points, rebounds and assists columns to make it more readable.
+
+(Link: <https://www.kaggle.com/datasets/terrycheng/201819-nba-players-stats/data> in case hyperlink doesn't work)
+
+```{r reading-the-dataset}
+library(dplyr)
+NBA_Player_Stats <- read.csv("18-19_NBA_Players_Stats.csv")
+
+```
+
+```{r creating-a-subset-of-the-data-for-improved-readability}
+NBA_Players_Box_Score <- select(NBA_Player_Stats, PLAYER, TEAM, PTS, REB, AST, STL, BLK)
+NBA_Players_Box_Score |> 
+  rename(
+    Points = PTS,
+    Rebounds = REB,
+    Assists = AST,
+    Steals = STL,
+    Blocks = BLK)
+
+
+```
+
+## Conclusions:
+
+I created a subset of the data featuring the main "Box Score" per game stats in a NBA season. That being points, rebounds, assists and blocks and I removed their abbreviations to improve readability. Going forward, depending on what data I would like to isolate, there are many different things I can do. For instance, if I wanted to focus on main contributors to the team, I could add the minutes column and then filter the list to only feature players who played significant minutes for their team. I mainly wanted to focus on Points per game so I could compare the top scorers from each team by filtering/removing all the other players except the ones who averaged the most this season.
