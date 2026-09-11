@@ -1,0 +1,22 @@
+---
+title: "DATA607_Lab2B"
+output: html_document
+date: "2026-09-10"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Approach Deliverable:
+
+# Introduction
+
+To begin this assignment, I am deciding to spend more time doing research as I am new to the machine learning concepts discussed in the lab. Once I have a basis understanding I will then begin the lab itself. Being that I am new to these concepts I am following of the Additional Instructions and conceptual roadmap. areas where I see potential problems would be understanding and developing insights based off the various parts of the lab. While things like Null Error Rate, Confusion Matrices and Performance for the most part are formula based calculations. Each of these just require finding the right numbers to plug into the formula to get the necessary results. However since I am new to a lot of these concepts it may be more difficult to really understand or draw insights from these calculations. This is why I am prioritizing research and understanding, using Chat GPT to help explain some of these tems and why they are useful in simpler terfms. As I begin the lab I will update my Approach or conclusion if I ecounter any more issues than stated above. As for approaching the data frame, I am currently using glimpse to take a look at the different columns and what these all mean as a feature. Then as stated in the Step By Step Guidance section, I decided to plot distribution of the target variable to better understand the data set as a whole.
+
+```{r cars}
+penguins_df <- read.csv("https://raw.githubusercontent.com/acatlin/data/refs/heads/master/penguin_predictions.csv")
+glimpse(penguins_df)
+```
+
+## 
