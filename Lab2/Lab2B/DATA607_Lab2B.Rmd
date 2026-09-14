@@ -14,9 +14,118 @@ knitr::opts_chunk$set(echo = TRUE)
 
 To begin this assignment, I am deciding to spend more time doing research as I am new to the machine learning concepts discussed in the lab. Once I have a basis understanding I will then begin the lab itself. Being that I am new to these concepts I am following of the Additional Instructions and conceptual roadmap. areas where I see potential problems would be understanding and developing insights based off the various parts of the lab. While things like Null Error Rate, Confusion Matrices and Performance for the most part are formula based calculations. Each of these just require finding the right numbers to plug into the formula to get the necessary results. However since I am new to a lot of these concepts it may be more difficult to really understand or draw insights from these calculations. This is why I am prioritizing research and understanding, using Chat GPT to help explain some of these tems and why they are useful in simpler terfms. As I begin the lab I will update my Approach or conclusion if I ecounter any more issues than stated above. As for approaching the data frame, I am currently using glimpse to take a look at the different columns and what these all mean as a feature. Then as stated in the Step By Step Guidance section, I decided to plot distribution of the target variable to better understand the data set as a whole.
 
-```{r cars}
+```{r count-of-penguins}
+library(dplyr)
+library(tidyverse)
 penguins_df <- read.csv("https://raw.githubusercontent.com/acatlin/data/refs/heads/master/penguin_predictions.csv")
-glimpse(penguins_df)
+count_of_sex <- table(penguins_df$sex)
+count_of_sex
 ```
 
 ## 
+
+This count shows that the most common class would be male.
+
+```{r null-error-rate}
+null_error_rate <- 1 - (max(count_of_sex) / sum(count_of_sex))
+null_error_rate
+```
+
+The null error rate is about 42%.
+
+```{r class-distribution-plot}
+
+ggplot(penguins_df, aes(x=sex)) + geom_bar();
+```
+
+```{r predictions-for-threshold}
+
+penguins_df$pred_02 <- ifelse(penguins_df$.pred_female > 0.2, 1, 0)
+
+penguins_df$pred_05 <- ifelse(penguins_df$.pred_female > 0.5, 1, 0)
+
+penguins_df$pred_08 <- ifelse(penguins_df$.pred_female > 0.8, 1, 0)
+
+table(Predicted = penguins_df$pred_02, Actual = penguins_df$sex)
+table(Predicted = penguins_df$pred_05, Actual = penguins_df$sex)
+table(Predicted = penguins_df$pred_08, Actual = penguins_df$sex)
+```
+
+Threshold 0.2
+
+FN: 2, TN: 48, TP: 37, FP 6\
+\
+Threshold 0.5\
+FN: 3, TN: 51, TP: 36, FP 3\
+\
+Threshold 0.8\
+FN: 3, TN 52, TP 36, FP 2
+
+```{r accuracy-for-each-threshold}
+
+#Accuracy = TP + TN / Total Predictions
+
+accuracy_02 <- mean(penguins_df$pred_02 == penguins_df$sex)
+accuracy_02
+
+accuracy_05 <- mean(penguins_df$pred_05 == penguins_df$sex)
+accuracy_05
+
+accuracy_08 <- mean(penguins_df$pred_08 == penguins_df$sex)
+accuracy_08
+
+```
+
+```{r precision-for-each-threshold}
+
+precision02 <- 37 / (37 + 6)
+precision02
+
+precision05 <- 36 / (36 + 3)
+precision05
+
+precision08 <- 36 / (36 + 3)
+precision08
+```
+
+```{r recall-for-each-threshold}
+
+#recall = TP / (TP + FN)
+
+recall02 <- 37 / (37 + 2)
+recall02
+
+recall05 <- 37 / (36 + 3)
+recall05
+
+recall08 <- 37 / (36 + 3)
+recall08
+```
+
+```{r f1-score-for-each-threshold}
+#f1 = 2 x (precision x recall) / (precision + recall)
+f1_02 <- 2 * (precision02 * recall02)/(precision02 + recall02)
+f1_02
+
+f1_05 <- 2 * (precision05 * recall05)/(precision05 + recall05)
+f1_05
+
+f1_08 <- 2 * (precision08 * recall08)/(precision08 + recall08)
+f1_08
+```
+
+Real World Scenarios for Threshold Use Cases:\
+\
+If you were wanted to accurately predict cancer in patients than you would want a lower threshold because you would capture more cancer patients as a false negative would be more dangerous than a false positive who receives further testing anyways.
+
+A higher threshold would be preferable for fingerprint scanners and security systems. The higher threshold would prevent random people accidentally gaining access, even though a false negative may inconvenience a user.\
+
+# Conclusion
+
+To conclude, while I was able to understand Null Error Rate, rather easily, the confusion matrix while a simple concept, I found hard to apply within the context of the problem. This part in particular, gave me trouble to understand, because I had to constantly go over what a True Positive would be in this case and then go from there. I need to often refer to the context of the problem to really understand what the results were showing. Which showcases the point of the preferable threshold depends on the context of the problem you are trying to solve.
+
+# Citations:
+
+OpenAI. (2026, September 14). *ChatGPT conversation about evaluating classification model performance* [Large language model]. ChatGPT.\
+\
+Link to chat: <https://chatgpt.com/s/t_6aa7615bdff88191a2ee1bec7faa6deb>
