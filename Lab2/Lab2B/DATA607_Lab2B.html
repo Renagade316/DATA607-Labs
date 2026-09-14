@@ -364,7 +364,7 @@ display: none;
 research as I am new to the machine learning concepts discussed in the
 lab. Once I have a basis understanding I will then begin the lab itself.
 Being that I am new to these concepts I am following of the Additional
-Instructions and conceptual roadmap. areas where I see potential
+Instructions and conceptual roadmap. Areas where I see potential
 problems would be understanding and developing insights based off the
 various parts of the lab. While things like Null Error Rate, Confusion
 Matrices and Performance for the most part are formula based
@@ -373,8 +373,8 @@ plug into the formula to get the necessary results. However since I am
 new to a lot of these concepts it may be more difficult to really
 understand or draw insights from these calculations. This is why I am
 prioritizing research and understanding, using Chat GPT to help explain
-some of these tems and why they are useful in simpler terfms. As I begin
-the lab I will update my Approach or conclusion if I ecounter any more
+some of these terms and why they are useful in simpler terms. As I begin
+the lab I will update my Approach or conclusion if I encounter any more
 issues than stated above. As for approaching the data frame, I am
 currently using glimpse to take a look at the different columns and what
 these all mean as a feature. Then as stated in the Step By Step Guidance
@@ -420,17 +420,20 @@ penguins_df$pred_05 &lt;- ifelse(penguins_df$.pred_female &gt; 0.5, 1, 0)
 
 penguins_df$pred_08 &lt;- ifelse(penguins_df$.pred_female &gt; 0.8, 1, 0)
 
-table(Predicted = penguins_df$pred_02, Actual = penguins_df$sex)</code></pre>
+table02 &lt;- table(Predicted = penguins_df$pred_02, Actual = penguins_df$sex)
+table02</code></pre>
 <pre><code>##          Actual
 ## Predicted female male
 ##         0      2   48
 ##         1     37    6</code></pre>
-<pre class="r"><code>table(Predicted = penguins_df$pred_05, Actual = penguins_df$sex)</code></pre>
+<pre class="r"><code>table05 &lt;- table(Predicted = penguins_df$pred_05, Actual = penguins_df$sex)
+table05</code></pre>
 <pre><code>##          Actual
 ## Predicted female male
 ##         0      3   51
 ##         1     36    3</code></pre>
-<pre class="r"><code>table(Predicted = penguins_df$pred_08, Actual = penguins_df$sex)</code></pre>
+<pre class="r"><code>table08 &lt;- table(Predicted = penguins_df$pred_08, Actual = penguins_df$sex)
+table08</code></pre>
 <pre><code>##          Actual
 ## Predicted female male
 ##         0      3   52
@@ -444,16 +447,18 @@ FN: 3, TN: 51, TP: 36, FP 3<br />
 Threshold 0.8<br />
 FN: 3, TN 52, TP 36, FP 2</p>
 <pre class="r"><code>#Accuracy = TP + TN / Total Predictions
+#sum(diag(conf_matrix)) / sum(conf_matrix)
 
-accuracy_02 &lt;- mean(penguins_df$pred_02 == penguins_df$sex)
+#accuracy_02 &lt;- mean(penguins_df$pred_02 == penguins_df$sex)
+accuracy_02 &lt;- sum(diag(table02)) / sum(table02)
 accuracy_02</code></pre>
-<pre><code>## [1] 0</code></pre>
-<pre class="r"><code>accuracy_05 &lt;- mean(penguins_df$pred_05 == penguins_df$sex)
+<pre><code>## [1] 0.08602151</code></pre>
+<pre class="r"><code>accuracy_05 &lt;- sum(diag(table05)) / sum(table05)
 accuracy_05</code></pre>
-<pre><code>## [1] 0</code></pre>
-<pre class="r"><code>accuracy_08 &lt;- mean(penguins_df$pred_08 == penguins_df$sex)
+<pre><code>## [1] 0.06451613</code></pre>
+<pre class="r"><code>accuracy_08 &lt;- sum(diag(table08)) / sum(table08)
 accuracy_08</code></pre>
-<pre><code>## [1] 0</code></pre>
+<pre><code>## [1] 0.05376344</code></pre>
 <pre class="r"><code>precision02 &lt;- 37 / (37 + 6)
 precision02</code></pre>
 <pre><code>## [1] 0.8604651</code></pre>
@@ -468,22 +473,22 @@ precision08</code></pre>
 recall02 &lt;- 37 / (37 + 2)
 recall02</code></pre>
 <pre><code>## [1] 0.9487179</code></pre>
-<pre class="r"><code>recall05 &lt;- 37 / (36 + 3)
+<pre class="r"><code>recall05 &lt;- 36 / (36 + 3)
 recall05</code></pre>
-<pre><code>## [1] 0.9487179</code></pre>
-<pre class="r"><code>recall08 &lt;- 37 / (36 + 3)
+<pre><code>## [1] 0.9230769</code></pre>
+<pre class="r"><code>recall08 &lt;- 36 / (36 + 3)
 recall08</code></pre>
-<pre><code>## [1] 0.9487179</code></pre>
+<pre><code>## [1] 0.9230769</code></pre>
 <pre class="r"><code>#f1 = 2 x (precision x recall) / (precision + recall)
 f1_02 &lt;- 2 * (precision02 * recall02)/(precision02 + recall02)
 f1_02</code></pre>
 <pre><code>## [1] 0.902439</code></pre>
 <pre class="r"><code>f1_05 &lt;- 2 * (precision05 * recall05)/(precision05 + recall05)
 f1_05</code></pre>
-<pre><code>## [1] 0.9357218</code></pre>
+<pre><code>## [1] 0.9230769</code></pre>
 <pre class="r"><code>f1_08 &lt;- 2 * (precision08 * recall08)/(precision08 + recall08)
 f1_08</code></pre>
-<pre><code>## [1] 0.9357218</code></pre>
+<pre><code>## [1] 0.9230769</code></pre>
 <p>Real World Scenarios for Threshold Use Cases:<br />
 <br />
 If you were wanted to accurately predict cancer in patients than you
@@ -499,15 +504,25 @@ inconvenience a user.<br />
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
-<p>To conclude, while I was able to understand Null Error Rate, rather
-easily, the confusion matrix while a simple concept, I found hard to
-apply within the context of the problem. This part in particular, gave
-me trouble to understand, because I had to constantly go over what a
-True Positive would be in this case and then go from there. I need to
-often refer to the context of the problem to really understand what the
-results were showing. Which showcases the point of the preferable
-threshold depends on the context of the problem you are trying to
-solve.</p>
+<p>To conclude this lab has helped me to better understand
+Classification metrics. I know understand the uses of Null Error Rate,
+Confusion Matrices, Accuracy, Precision, Recall and F1 Score. And after
+researching these concepts working through the lab helped solidify my
+understanding by putting them into practice. While most of these
+concepts ended up being relatively straightforward overall, I found
+understanding Confusion Matrices the most challenging. The concept made
+sense, but in application I found myself having to refer to the context
+of the problem multiple times to understand the what the difference in
+threshold would accomplish. I found that lower thresholds would increase
+the amount of True Positive results, while higher thresholds would
+increase the amount of true negative results. high low thresholds
+increase false the number of false positives and high thresholds
+increase the number of false negatives respectively. So which is
+preferable is entire dependent on the context of the problem one is
+trying to solve. I also found that the Null Error Rate is important to
+determine the how effective the model predictive probability is.
+Ultimately the lab helped me to better understand the applications of
+these concepts moving forward.</p>
 </div>
 <div id="citations" class="section level1">
 <h1>Citations:</h1>
