@@ -8,22 +8,60 @@ date: "2026-09-11"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Lab 2A: Approach Deliverable
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# Introduction
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+The approach for this lab I broke into 3 parts: How I would gather the data, How I would set the data up, and how I would get the data on an R markdown file. For the survey the questions that I asked myself was how would I collect the data, what movies would I select and who would I ask. For the movie selection, I asked my friend to suggest 6 movies that came out recently. The thought process was that these movies would be popular enough that many people have already watched them, and recent enough to rate accurately. But also since these aren't classics it's unlikely that everybody asked would have seen every single movie. The movies chosen was Odyssey, Avatar Fire and Ash, Weapons, Obsession, The Long Walk and Spider man Brand New Day. in line with the assignment objectives, the rating system is on a scale of 1-5 scale. To collect data I told people to rate each movie and I record the results on my notes app. I've told people for now if they have not seen a movie to let me know and I put N/A as a response. So far I have 4 responses.
 
-```{r cars}
-summary(cars)
+For how I am going to setup my database. I am using PG Admin 4 and PostgreSQL. The optional instructions indicated using 3 tables:
+
+-   users(user_id, name)
+
+-   movies(movie_id, title)
+
+-   ratings(user_id, movie_id, rating)
+
+I may intend to add name to the ratings table, or include the name in the data frame on the R markdown with some type of join. A challenge I expect to have is dealing with missing data. Initially I did not think much about it, because I would manually add the data into each table, I just would not enter that the "missing" rating into the table. But upon further reflection I realized that for a realistic scenerio that would not be the case. Currently, I am considering leaving those values as NULL. But I will do further research and update my approach if my ideas change.
+
+Lastly, I decided to export a .csv file of my database to GIthub and use the raw URL to display my tables in my Rmd page. I opted for this method because it seemed like the more simple and straight forward option.
+
+```{r load dataset}
+library(dplyr)
+users_df <- read.csv("https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Lab2/Lab2A/Lab2a_Users.csv")
+
+movies_df <- read.csv("https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Lab2/Lab2A/Lab2a_Movies.csv")
+
+ratings_df <- read.csv("https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Lab2/Lab2A/Lab2a_Ratings.csv")
+
+glimpse(users_df)
+colnames(users_df)[1] <- "user_id"
+colnames(users_df)[2] <- "name"
+
+glimpse(movies_df)
+colnames(movies_df)[1] <- "movie_id"
+colnames(movies_df)[2] <- "title"
+
+glimpse(ratings_df)
+colnames(ratings_df)[1] <- "user_id"
+colnames(ratings_df)[2] <- "movie_id"
+colnames(ratings_df)[3] <- "rating"
+
+
+joined_table <- left_join(users_df, ratings_df, by = "user_id")
+joined_table <- left_join(movies_df, joined_table, by = "movie_id")
+joined_table <- select(joined_table, name, title, rating)
+joined_table
+
+
 ```
 
-## Including Plots
+# Conclusions
 
-You can also embed plots, for example:
+In conclusion, looking back at my approach there was one major change in how I chose to implement the data. I over thought the problem of handling missing values, and was originally gonna assign missing values in the table as NULL. Wanting to make sure that schema was well structured, I prompted ChatGPT, which made the point that it was not necessary to add the missing values at all on the PostgreSQL level. When I exported the data into R Studio, it would be more appropriate to keep add N/A records for each missing value, to show the complete number of survey results. Due to time constraints, I was not able to implement this now, but for further study, this would be something that I would add. Additionally, the process of exporting tables ended up being more complicated than I initially assumed. I did not think, that I would have to add column names, and it was interesting figuring out the best way to combine all the data sets in a way that was both clean and readable.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+# Citations:
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+OpenAI. (2026, September 13). *ChatGPT conversation about SQL database design, missing values, and primary key errors* [Large language model]. ChatGPT.
+
+Link to chat: <https://chatgpt.com/s/t_6aa747e7829c8191a5f814735d58a2c7>
