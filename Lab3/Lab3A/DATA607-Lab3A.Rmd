@@ -1,7 +1,7 @@
 ---
-title: "DATA607-Lab3A"
+title: "DATA607_Lab3A"
 author: "Renan Charles-Pierre"
-date: "2026-09-17"
+date: "2026-09-18"
 output: html_document
 ---
 
@@ -9,22 +9,17 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Introduction:
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+**Global Baseline Estimates**
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+To create a global baseline estimate recommendation system for this lab first requires taking my tables from of movie ratings from my previous lab. For the purposes of this lab I will rejoin the User, Movie and Ratings tables to match the given example. Where my lab 2 left off, every row was a different critic and their rating of that specific movie. It will be necessary to have my table have each critic and every other column be a movie that they rated. This puts all of a user's ratings in one clean row. To accomplish I will have to adjust how I joined these 3 tables together. Once my tables are set up, I can then becgin to run calculations for the other columns and rows like the user average, the movie average rating, as the example shows. To figure out what each column performed these calculations I imported the examples in Google Sheets and then double clicked these boxes to see how the value was obtained. Using this method, I believe that once setup, this lab will be fairly straightforward to accomplish. One thing I am confused about is calculating the deviations (as seen in the Movie Centered Ratings tab). These values don't seem to be used in any of the final processes of calulating a recommendation for a user. However, maybe this is an oversight on my part, and I missed something when researching how to solve create this recommendation model. I will update any changes to my ideas in my Conclusion.\
+\
 
-```{r cars}
-summary(cars)
+```{r ratings-movies-user-dataframes}
+ratings_df
+users_df
+movies_df
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Conclusion:
