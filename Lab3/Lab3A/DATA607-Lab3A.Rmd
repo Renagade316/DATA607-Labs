@@ -17,9 +17,105 @@ To create a global baseline estimate recommendation system for this lab first re
 \
 
 ```{r ratings-movies-user-dataframes}
-ratings_df
-users_df
-movies_df
+library(tidyverse)
+library(dplyr)
+
+users_df <- read.csv("https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Lab2/Lab2A/Lab2a_Users.csv")
+
+movies_df <- read.csv("https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Lab2/Lab2A/Lab2a_Movies.csv")
+
+ratings_df <- read.csv("https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Lab2/Lab2A/Lab2a_Ratings.csv")
+
+glimpse(users_df)
+colnames(users_df)[1] <- "user_id"
+colnames(users_df)[2] <- "name"
+
+glimpse(movies_df)
+colnames(movies_df)[1] <- "movie_id"
+colnames(movies_df)[2] <- "title"
+
+glimpse(ratings_df)
+colnames(ratings_df)[1] <- "user_id"
+colnames(ratings_df)[2] <- "movie_id"
+colnames(ratings_df)[3] <- "rating"
+
+joined_table <- left_join(users_df, ratings_df, by = "user_id")
+joined_table <- left_join(movies_df, joined_table, by = "movie_id")
+joined_table <- select(joined_table, name, title, rating)
+
+# Turning the table from long to wide
+movie_ratings <- joined_table |> pivot_wider(names_from = title, values_from = rating)
+
+#User ratings
+movie_ratings <- movie_ratings |> mutate(
+  user_avg = 
+    rowMeans(pick
+             (
+               `Avatar Fire and Ash`,
+               `Obsession`,
+               `Weapons`,
+               `The Long Walk`,
+               `Spiderman Brand New Day`
+               ), na.rm = TRUE))
+#Movie Ratings
+movie_ratings <- movie_ratings |>
+  add_row(
+    name = 'movie_avg',
+    'Avatar Fire and Ash' = mean(movie_ratings$`Avatar Fire and Ash`, na.rm = TRUE), 
+    'Obsession' = mean(movie_ratings$Obsession, na.rm = TRUE),
+    'Weapons' = mean(movie_ratings$Weapons, na.rm = TRUE),
+    'The Long Walk' = mean(movie_ratings$`The Long Walk`, na.rm = TRUE),
+    'Spiderman Brand New Day' = mean(movie_ratings$`Spiderman Brand New Day`, na.rm = TRUE),
+    'user_avg' = mean(movie_ratings$user_avg, na.rm = TRUE)
+    )
+
+
+#Movie Ratings - Mean Movie
+movie_ratings <- movie_ratings |> 
+  mutate(
+    user_avg_sub_mean_movie = movie_ratings$user_avg - movie_ratings$user_avg[6]
+    #if_else(movie_ratings$user_avg - movie_ratings$user_avg[6] == 0,
+    #        user_avg_sub_mean_movie = movie_ratings$user_avg - movie_ratings$user_avg[6],
+    #        user_avg_sub_mean_movie == " ")
+    )
+
+
+#Movie_Avg - Mean_movie
+movie_ratings <- movie_ratings |>
+  add_row(
+    name = 'movie_avg-mean_movie',
+    'Avatar Fire and Ash' = movie_ratings$`Avatar Fire and Ash`[6] - movie_ratings$user_avg[6], 
+    'Obsession' = movie_ratings$`Obsession`[6] - movie_ratings$user_avg[6],
+    'Weapons' = movie_ratings$`Weapons`[6] - movie_ratings$user_avg[6],
+    'The Long Walk' = movie_ratings$`The Long Walk`[6] - movie_ratings$user_avg[6],
+    'Spiderman Brand New Day' = movie_ratings$`Spiderman Brand New Day`[6] - movie_ratings$user_avg[6]
+    )
+
+movie_ratings
+
+#Global Baseline Estimate = Mean Movie Rating + Movie_Name's rating relative to average + User's rating relative to average
+
+#Global Baseline Estimate for each movie Kaitlin hasn't seen
+avatar_gbe <- movie_ratings$user_avg[6] - movie_ratings$`Avatar Fire and Ash`[7]- movie_ratings$user_avg_sub_mean_movie[4]
+avatar_gbe
+
+obsession_gbe <- movie_ratings$user_avg[6] - movie_ratings$`Obsession`[7]- movie_ratings$user_avg_sub_mean_movie[4]
+obsession_gbe
+
+lwalk_gbe <- movie_ratings$user_avg[6] - movie_ratings$`The Long Walk`[7]- movie_ratings$user_avg_sub_mean_movie[4]
+lwalk_gbe
+
+spiderman_gbe <- movie_ratings$user_avg[6] - movie_ratings$`Spiderman Brand New Day`[7]- movie_ratings$user_avg_sub_mean_movie[4]
+spiderman_gbe
+
+
+
+
+
 ```
 
+Based on Global Baseline Estimates, Kaitlin should watch either Avatar Fire and Ash or The Long Walk.
+
 ## Conclusion:
+
+To conclude, many of my predictions in the introduction were accurate. However, I can say I now understood the value of the user_avg - mean movie column, I did not realize that it was used in the final equation at the end. Also, I did have some trouble figuring out how I would rearrange the data so that it was more wide than long, I stumble upon the pivot_wider() function which made it simple to create columns based on the movie titles and populate each cell with the rating from that particular user. If I wanted to expand this project, I would create another column and put the title of the title of the movie with the highest Global Baseline Estimate score, so that in the real world, the user would be offered a movie as a recommendation. This would be done, by comparing the values of each Global Baseline Estimate value for each movie. I also would wonder about scaleability because many of these values are calculated based on the positional index of a specific cell, which would make this difficult, if there were more values being added to the data set.
