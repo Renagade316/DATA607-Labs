@@ -1,0 +1,23 @@
+---
+title: "Project 1"
+author: "Renan Charles-Pierre"
+date: "2026-09-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+To complete Project 1 the first thing that I have to do, is figure out how to read a txt file into R. From there I likely will have to reformat the data frame to suit my needs, selecting the tables that I need. Then I will have to calculate the average opponent pre game chess rating. Lastly I will export the RMD file as an csv file to complete all required objectives for this assignment. I anticipate the most difficult task to complete will be formatting the data form the text file. All my previous experience has been importing csv files which format very well into R, with my lack of experience in working with txt files, I will have to spend time researching the best moethod for reading txt files and then reformatting it. As of now, I tried to quickly use the read.table() function to read the txt file (locally stored for now, will change on final submission) and I am already running into errors. As the approach deliverable does not require code, I have yet to make any corrections, but I will update my conclusions with the solution and any other issues that may arise.
+
+```{r read-txt-file}
+chess_info <- read.table("tournamentinfo.txt");
+chess_info
+```
+
+## Conclusion
+
+LLLLLL
