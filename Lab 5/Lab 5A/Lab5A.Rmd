@@ -1,0 +1,136 @@
+---
+title: "DATA607 Lab5A"
+author: "Renan Charles-Pierre"
+date: "2026-10-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+For this lab I went to Excel to create my csv file with all the information directly from the instructions. From there I read the data locally (will switch to a github raw URL upon submission) into a data frame. One thing I noticed is that when I created the spreadsheet, i created a space between the Alaska and Am West rows that i will now have to remove using R. From here, I spent much time working out how I would want my long form table to look with a pen and notepad. I decided to have 4 columns:\
+\
+Airline \| City\| On Time \| Delayed\
+\
+I confirmed my long form table with Chat GPT, interestingly Chat's answer had On Time and Delayed values combined into a column called status and then the number of flights was the 4th column. When I shared my idea with the chatbot, it said it preferred my table so that's what I will be going with. I anticipate the 2nd row for delayed flights for both airlines may be difficult to turn into columns because the airline is blank for each of those rows. I also think the On time/ delayed format of the wide table will be difficult to separate into 2 separate tables. Will update my conclusion with how I face both of these challenges.
+
+```{r transforming-the-data}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+airline_delays <- read.csv("https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Lab%205/Lab%205A/Airline_Delays.csv")
+colnames(airline_delays)[1] <- "Airlines"
+colnames(airline_delays)[2] <- "Status"
+
+# Separated each airline row between On Time and Delayed (got rid of blank 3rd row)
+alaska_OT <- airline_delays[1, ]
+alaska_del <- airline_delays[2, ]
+alaska_del[1, 1] <- "Alaska"
+
+amwest_OT <- airline_delays[4,  ]
+amwest_del <- airline_delays[5, ]
+amwest_del[1, 1] <- "AM West"
+
+airline_delays <- rbind(alaska_OT, alaska_del, amwest_OT, amwest_del)
+
+al_long <- airline_delays %>% pivot_longer(
+  cols = c(Los.Angeles, Phoenix, San.Diego, San.Francisco, Seattle),
+  names_to = "City",
+  values_to = "Flights"
+) |>
+  pivot_wider(
+  names_from = Status,
+  values_from = Flights
+)
+
+al_long <- mutate(
+   al_long, Total = `On Time` + Delayed
+)
+
+al_long
+
+
+```
+
+```{r data-analysis}
+library(dplyr)
+library(tidyr)
+
+ggplot(data = al_long, aes(x=City, y=Delayed)) + geom_col()
+ggplot(data = al_long, aes(x=Airlines, y=Delayed)) + geom_col()
+ggplot(data = al_long, aes(x=Airlines, y=Total)) + geom_col()
+ggplot(data = al_long, aes(x=City, y=Total)) + geom_col()
+
+results <- al_long %>%
+  group_by(Airlines) %>%
+  summarize(avg_delay = sum(Delayed)/ sum(Total))
+
+print(results)
+
+```
+
+# Conclusion
+
+As mentioned previously the most difficult part of the lab ended up being splitting the On time / Delayed column into 2 separate columns containing the number of flights for each. Originally I had planned to create two separate tables one with a delayed column, one with an on time column but I then realized I did not have a primary key to join the two tables. I then consulted Chat GPT (prompt linked below) with my ideas to see if there were any simpler solutions. Chat advised to stack a pivot_longer to create the City, columns and renaming the counts to flights with pivot_wider to split the status column into two columns: on time and delayed which had the values representing the number of flights that fit these categories. Interestingly, I encountered an error in my code where the delayed values for Am West, were left blank when they were properly contained in my pivot_longer() code. Example below:\
+\
+\
+
++----------+---------------+---------+---------+---+
+| Airlines | City          | On Time | Delayed |   |
+|          |               |         |         |   |
+| \<chr\>  | \<chr\>       | \<int\> | \<int\> |   |
++:=========+:==============+========:+========:+===+
+| Alaska   | Los.Angeles   | 497     | 62      |   |
++----------+---------------+---------+---------+---+
+| Alaska   | Phoenix       | 221     | 12      |   |
++----------+---------------+---------+---------+---+
+| Alaska   | San.Diego     | 212     | 20      |   |
++----------+---------------+---------+---------+---+
+| Alaska   | San.Francisco | 503     | 102     |   |
++----------+---------------+---------+---------+---+
+| Alaska   | Seattle       | 1841    | 305     |   |
++----------+---------------+---------+---------+---+
+| AM West  | Los.Angeles   | 694     | NA      |   |
++----------+---------------+---------+---------+---+
+| AM West  | Phoenix       | 4840    | NA      |   |
++----------+---------------+---------+---------+---+
+| AM West  | San.Diego     | 383     | NA      |   |
++----------+---------------+---------+---------+---+
+| AM West  | San.Francisco | 320     | NA      |   |
++----------+---------------+---------+---------+---+
+| AM West  | Seattle       | 201     | NA      |   |
++----------+---------------+---------+---------+---+
+
+The error was found when I looked at my wide table after removing the 3rd row of blanks:\
+
++---+----------+---------+-------------+---------+-----------+---------------+---------+
+|   | \        | Status  | Los.Angeles | Phoenix | San.Diego | San.Francisco | Seattle |
+|   | Airlines |         |             |         |           |               |         |
+|   |          | \<chr\> | \<int\>     | \<int\> | \<int\>   | \<int\>       | \<int\> |
+|   | \<chr\>  |         |             |         |           |               |         |
++===+:=========+:========+============:+========:+==========:+==============:+========:+
+| 1 | Alaska   | On Time | 497         | 221     | 212       | 503           | 1841    |
++---+----------+---------+-------------+---------+-----------+---------------+---------+
+| 2 | Alaska   | Delayed | 62          | 12      | 20        | 102           | 305     |
++---+----------+---------+-------------+---------+-----------+---------------+---------+
+| 4 | AM West  | On Time | 694         | 4840    | 383       | 320           | 201     |
++---+----------+---------+-------------+---------+-----------+---------------+---------+
+| 5 | Am West  | Delayed | 117         | 415     | 65        | 129           | 61      |
++---+----------+---------+-------------+---------+-----------+---------------+---------+
+
+\
+I recreated this table by making data frames for every row, manually adding the airline name to the delayed rows and then joining them back together But after looking at my code I realized I had written\
+\
+amwest_del[1, 1] \<- "Am West"\
+\
+When the original data set has "AM West" as the airline name, so the delayed values weren't matched to the airline and were then left blank on the pivot_wider(). For analysis I created a charts that compared the delayed flights by city, the delayed flights by airline and I created a new column called *Total* which combined the number of on time and delayed flights. I then calculated what percentage of flights are delayed for both airlines since Am West has a much larger amount of total flights. I found that while Am West has a much larger number of flights, about 2% less of their flights are delayed compared to Alaska.\
+
+# Citations
+
+OpenAI. (2026). *ChatGPT* (GPT-5.6 Luna) [Large language model]. <https://chatgpt.com/>
+
+Link to chat: <https://chatgpt.com/share/6ac29d4b-d2b0-83ea-b116-68af6510b44b>
