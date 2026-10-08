@@ -1,0 +1,20 @@
+---
+title: "Project2"
+author: "Renan Charles-Pierre"
+date: "2026-10-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+One data set that I am choosing to use for Project 2, was the Life Expectancy at Birth By Country discussed by Mohd Afwan Shaikh on the Untidy Data discussion board. The reason why I chose this data set is because I found this data to be interesting. I was already intrigued and thinking of various questions I would have relating to the data and there were things that I could modify to tidy the data. For example the column indicator code for the data set and for my purposes I do not believe this column is necessary. Also when imported into Google Sheets the first two rows include the data source and the last updated date, both are not necessary for my puposes so I would need to remove those as well. To make the data long formatted, I will combine the all the year columns into one column, *year* which would significantly shorten the number of columns. To my knowledge I have not found any missing or inconsistent values, but if I do I will include that in my conclusion. As for analysis I will create a simple table of the results. But I am also curious as to the rolling average life expectancy for the United States, so I plan on creating a data frame and adding that column. Then I will create a visual likely a line graph to chart the average over time to see if there were any trends in the data. I anticipate the most difficult part of tidying this data set is putting the data in long format as I am still a little shaky on the pivot_longer() from the tidyr package, but I don't expect to have too much trouble with data set overall.\
+
+```{r Life-Expectancy}
+
+```
+
+## Conclusion
