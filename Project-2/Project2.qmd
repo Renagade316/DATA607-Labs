@@ -1,0 +1,314 @@
+---
+title: "Project2"
+author: "Renan Charles-Pierre"
+format: html
+editor: visual
+---
+
+# Introduction
+
+One data set that I am choosing to use for Project 2, was the Life Expectancy at Birth By Country discussed by Mohd Afwan Shaikh on the Untidy Data discussion board. The reason why I chose this data set is because I found this data to be interesting. I was already intrigued and thinking of various questions I would have relating to the data and there were things that I could modify to tidy the data. For example the column indicator code for the data set and for my purposes I do not believe this column is necessary. Also when imported into Google Sheets the first two rows include the data source and the last updated date, both are not necessary for my puposes so I would need to remove those as well. To make the data long formatted, I will combine the all the year columns into one column, \*year\* which would significantly shorten the number of columns. To my knowledge I have not found any missing or inconsistent values, but if I do I will include that in my conclusion. As for analysis I will create a simple table of the results. But I am also curious as to the rolling average life expectancy for the United States, so I plan on creating a data frame and adding that column. Then I will create a visual likely a line graph to chart the average over time to see if there were any trends in the data. I anticipate the most difficult part of tidying this data set is putting the data in long format as I am still a little shaky on the pivot_longer() from the tidyr package, but I don't expect to have too much trouble with data set overall.
+
+```{r packages}
+library(tidyr)
+library(dplyr)
+library(slider)
+library(stringr)
+library(ggplot2)
+```
+
+## Dataset 1: Life Expectancy at Birth By Country
+
+```{r life-expectancy-data-import-cleaning}
+life_expectancy <- read.csv("https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Project-2/Life_Expectancy_at_Birth_By_Country.csv", skip = 4, header = TRUE)
+
+#Removing the rownames
+rownames(life_expectancy) <- NULL
+
+#Changing the data to long format by coming every year into one column
+le_long <- life_expectancy %>% pivot_longer(
+  cols = starts_with("X"),
+  names_to = "Year",
+  values_to = "Life_Expectancy")
+
+#Removing all 2025 values because they're all missing
+le_long <- le_long %>% 
+  filter(!str_starts(Year, "X2025"))
+
+#Removing Not Classified (all values are missing)
+le_long <- le_long %>% 
+  filter(!str_starts(Country.Code, "INX"))
+
+#Removing indicator Name and Indicator Code Columns
+le_long$Indicator.Name <- NULL
+le_long$Indicator.Code <- NULL
+
+#Changing the Year values from strings to numbers
+le_long <- le_long %>% 
+  mutate(Year = as.numeric(substring(Year, 2)))
+
+#Final table
+head(le_long, n=10)
+
+```
+
+After tidying the data, I would like to compare life expectancy across different countries and examine how it has changed over time. I could also investigate which countries experienced the greatest improvements and how life expectancy changed before and after the COVID-19 pandemic.
+
+```{r sliding-mean}
+countries <-  le_long %>%
+  filter(Country.Name %in% c("United States","Japan","Canada"),Year >= 1960, Year <= 2024,
+    !is.na(Life_Expectancy))
+
+ggplot(countries,
+       aes(x = Year,
+           y = Life_Expectancy,
+           color = Country.Name)) +
+  geom_line(linewidth = 1) +
+  labs(
+    title = "Life Expectancy Over Time",
+    x = "Year",
+    y = "Life Expectancy (Years)",
+    color = "Country"
+  ) +
+  scale_x_continuous(
+    breaks = seq(1960, 2020, by = 10)
+  ) +
+  theme_minimal()
+
+
+
+usa <- le_long %>% filter(
+  Country.Code == "USA"
+)
+
+usa <- usa |>
+  mutate(Avg_Over_Time = slide_mean(Life_Expectancy, before = 5))
+
+ggplot(data=usa, aes(x=Year)) + 
+  geom_line(aes(y=Avg_Over_Time, color = "Avg Over Time")) + 
+  geom_line(aes(y=Life_Expectancy, color = "Life Expectancy")) +
+    scale_color_manual(
+    values = c(
+      "Avg Over Time" = "blue",
+      "Life Expectancy" = "red"
+    )) + scale_x_continuous(breaks = seq(1960, 2020, by = 10)) +
+  labs(
+    title = "U.S. Life Expectancy at Birth (1960–2024)",
+    x = "Year",
+    y = "Life Expectancy (Years)",
+    color = "Measure"
+  )
+
+#usa$Life_Expectancy[usa$Year == 2020] -usa$Life_Expectancy[usa$Year == 2019]
+#usa$Life_Expectancy[usa$Year == 2024] -usa$Life_Expectancy[usa$Year == 2020]
+```
+
+### Analysis and Conclusion:
+
+To analyze a countries life expectancy over time, I chose the United States, Canada and Japan. The life expectancy increased over time then sharply drops in 2020 likely do to Covid-19 virus although I cannot prove this was the reason. The results of the graph seem to show that Canada's life expectancy dropped the least from those years while the United States life expectancy dropped the most. To look into this trend more I also plotted a 5 year average life expectancy in the United States along with the year to year life expectancy to compare the trend over time. Interestingly enough the life expectancy in the United States only dropped by about 2 years and from 2020 to 2024 the life expectancy actually grew higher then 2019 (results shown below). So the life expectancy in 2020 was lower than Canada and Japan, the difference itself wasn't large.
+
+```         
+-1.807317
+[1] 1.909756
+```
+
+In conclusion to clean the data as I shared in my introduction, I combined all the year columns into one. I then removed the empty rows at the beginning and removed the indicator rows because they are not necessary for my purpose. Then I converted the years from strings to numbers. The most difficult part when it comes to cleaning the data in this case was dealing with missing values. The Life_Expectancy column had many missing values I inspected the data to determine which countries had missing values. The first thing that I noticed was that each country had N/A for 2025 which led me to assume that maybe the data had not been updated to that point. So I thought it would be best to remove 2025 life expectancy for all countries, because I can still analyze from 1960-2024 and there would be no way to calculate the life expectancy for that year. I also noticed there was a country name not classified that had no data for every year from 1960 - 2025, so I removed all values from that "country" because this was not useful for my purpose. Lastly, countries like Israel were missing some years a couple of consecutive years. For those I thought about calculating the average between them, but I decided it would be better to just not include those countries in my analysis because there was no way to accurately determine the Life Expectancy.
+
+## Dataset 2: Employment data
+
+```{r employment-data-import-cleaning}
+employment <- read.csv("https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Project-2/Employee_Data_for_Cleaning.csv")
+
+#Combining the first and last name rows
+employment <- employment %>% unite(col = "Full_Name", First_Name, Last_Name, sep = " ")
+
+#Splitting the Department_Region column into two sepearate columns
+employment <- employment %>% separate_wider_delim(cols = Department_Region, delim = "-", names = c("Department", "Region"))
+
+#Making sure all salaries are Numbers
+employment <- employment %>% 
+  mutate(Salary = as.numeric(Salary))
+
+#Any salaries that are N/A will be listed as 0 for right now
+
+#Converting all dates to the same date format
+employment <- employment %>% 
+  mutate(Join_Date = as.Date(Join_Date, format = "%m/%d/%Y"))
+
+# Check the number of records and unique IDs
+employment |>
+  summarise(
+    total_rows = n(),
+    unique_ids = n_distinct(Employee_ID),
+    missing_ids = sum(is.na(Employee_ID)))
+
+
+
+head(employment, n=10)
+```
+
+```{r employment-analysis}
+
+#removing the N/A salaries 
+employment_na <- employment %>%  filter(!is.na(Salary))
+
+
+#average salary by age
+sal_by_age <- employment_na %>%
+  group_by(Age) %>%
+  summarise(Avg_Salary = mean(Salary, na.rm = TRUE))
+
+ggplot(data = sal_by_age, aes(x=Age, y=Avg_Salary, fill = Age)) + geom_col() + 
+  scale_x_continuous(breaks = seq(2020, 2024, by = 1))+
+  labs(title = "Average Salary by Age", x= "Age", y= "Average Salary Age") + theme_minimal()
+
+#average salary by join_year, used years to avoid day-to=day noise
+sal_by_join_year <- employment_na %>%
+  mutate(Join_Year = as.integer(format(Join_Date, "%Y"))) %>%
+  group_by(Join_Year) %>%
+  summarise(
+    Avg_Salary = mean(Salary, na.rm = TRUE),
+    Employee_Count = n(),
+    .groups = "drop"
+  )
+
+sal_by_join_year
+
+ggplot(sal_by_join_year,aes(x = Join_Year, y = Avg_Salary)) + geom_line() + geom_point() +
+  scale_x_continuous(breaks = sal_by_join_year$Join_Year) +
+  labs(title = "Average Salary by Year of Hire", x = "Year Hired", y = "Average Salary ($)")   + theme_minimal()
+
+#box plot
+ggplot(employment_na, aes(x = factor(format(Join_Date, "%Y")),
+                          y = Salary)) +
+  geom_boxplot() +
+  labs(
+    title = "Salary Distribution by Year of Hire",
+    x = "Year Hired",
+    y = "Salary ($)"
+  ) +
+  theme_minimal()
+
+#average salary by region
+sal_by_region <- employment_na %>%
+  group_by(Region) %>%
+  summarise(Avg_Salary = mean(Salary, na.rm = TRUE))
+
+ggplot(data = sal_by_region, aes(x=Region, y=Avg_Salary, fill = Region)) + geom_col() + 
+  labs(title = "Average Salary by Region", x= "Region", y= "Average Salary ($)") +  theme_minimal() + geom_hline(aes(yintercept = mean(Avg_Salary)),
+                   color = "red", linetype="dashed", linewidth = 1)                                                                                            
+
+
+```
+
+### Analysis and Conclusion:
+
+For my analysis I graphed the average salary by age, average salary by year of hire and average salary by region. The average salary remained around the same for each of these categories with some small changes. For example, the salaries for people 25-35 remained was around the same with a small increase for employees who were 40 years old. The same goes for the states. There is a slight increase in salary for states like California and Florida. Surprisingly, there was a decline between average salaries by year and then a rather large drop in salary on average for employees hired in 2023 from \$85288.72 to \$83245.13 , then those hired in 2024 have the highest average salary growing to \$86, 088.15.
+
+In conclusion, when looking at the original data set, I did not really see much of an opporunity to make the data any longer without compromising my ability to properly analyze the data besides combine the first name and last name columns together. However, I decided to continue with this data set because there were still many other ways to clean the data set. I split the Department and Region columns into separate ones, I combined the name columns, I converted every salary to a number in case there were any strings and converted every date to a standard format. One thing that I had trouble with initially was dealing with missing values and duplicate names. The salary, age and Join Date columns all had missing values, but I found that the number of each of these was a small portion of the entire data set. Without any way to reliably calculate these values I just chose to remove them from my analysis. So there is a chance some of my findings are inaccurate but considering that that these did not represent a large portion of the data, they should be insignificant.
+
+## Dataset 3: Real World Medical Data
+
+```{r medical-load-data}
+#Read the data
+medical <- read.csv("https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Project-2/realworld_medical_dirty.csv")
+
+#Title case for Gender
+medical <- medical |> mutate(Gender = str_to_sentence(Gender))
+
+#Standardizing results
+medical <- medical |> mutate(Smoker = if_else(Smoker == "Y", "Yes", Smoker))
+medical <- medical |> mutate(Smoker = if_else(Smoker == "N", "No", Smoker))
+
+#Converting all dates to the same date format
+medical <- medical %>%
+  mutate(Admission_Date = format(as.Date(Admission_Date, format = "%Y-%m-%d"),
+    "%m/%d/%Y"))
+
+#Replacing NaN values with N/A
+medical <- medical %>%
+  mutate(Gender = na_if(Gender, "NaN"))
+
+medical <- medical %>%
+  mutate(Gender = na_if(Gender, "nan"))
+
+medical <- medical %>%
+  mutate(Gender = na_if(Gender, "Nan"))
+
+medical <- medical %>%
+  mutate(Smoker = na_if(Gender, "nan"))
+
+medical <- medical %>%
+  mutate(Diagnosis = na_if(Diagnosis, "nan"))
+
+
+
+head(medical, n=10)
+
+#Checking the percentage of missing diagnosis data
+medical %>%
+  summarise(
+    Total_Rows = n(),
+    Missing_Diagnosis = sum(is.na(Diagnosis)),
+    Percent_Missing = mean(is.na(Diagnosis)) * 100
+  )
+
+medical %>%
+  filter(is.na(Diagnosis))
+```
+
+```{r medical-analysis}
+#Removing N/A values
+medical_na <- medical %>%  filter(!is.na(Diagnosis))
+
+medical %>% filter(!is.na(Diagnosis)) %>%
+  group_by(Diagnosis) %>%
+  summarise(
+    Patient_Count = n(),
+    Average_Age = mean(Age, na.rm = TRUE),
+    Median_Age = median(Age, na.rm = TRUE),
+    Average_BMI = mean(BMI, na.rm = TRUE),
+    Median_BMI = median(BMI, na.rm = TRUE),
+    Average_Blood_Pressure = mean(Blood_Pressure, na.rm = TRUE),
+    Median_Blood_Pressure = median(Blood_Pressure, na.rm = TRUE)
+  )
+
+
+
+medical %>%
+  filter(
+    !is.na(Age),
+    !is.na(Diagnosis)
+  ) %>%
+  mutate(
+    Diabetes_Status = if_else(
+      str_detect(
+        str_to_lower(Diagnosis),
+        "diabetes"
+      ),
+      "Diabetes",
+      "Other Diagnoses"
+    )
+  ) %>%
+  ggplot(aes(
+    x = Diabetes_Status,
+    y = Age,
+    fill = Diabetes_Status
+  )) +
+  geom_boxplot() +
+  labs(
+    title = "Age Distribution: Diabetes vs. Other Diagnoses",
+    x = "Diagnosis Group",
+    y = "Age"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
+```
+
+### Analysis and Conclusion:
+
+To analyze the data I decided to create a summary table comparing the average age, BMI and blood pressure of every diabetes diagnosis, heart disease diagnosis and no diagnosis. Ultimately there seemed to be no correlation between a diagnosis and these factors. I decided to check for the median, to account for any potential outliers skewing the mean. The median for the age of people with diabetes 55, was much larger than the mean age for people with diabetes. To look further into this I created a box plot comparing the diabetes diagnosis compared to heart disease and none. But the results seemed inconclusive. It is also worth noting that it was not specified what type of diabetes was included. Also 21% of diagnosis data was missing and had to be removed from my analysis so there is a sizable portion of the data missing.
+
+In conclusion, to clean this data set I mostly spent time standardizing and formatting the data. I corrected all Gender values to title case, I changed the date format for Admission Date, I standardized the Smoker column so that all values are either "Yes" and "No" and I changed the values labeled "nan" to N/A since the data was missing. For my analysis there was a sizable portion of the data missing so I was not able to include this in my calculations, but since this was medical data, there was no way to calculate these values so all I could do was remove them.
