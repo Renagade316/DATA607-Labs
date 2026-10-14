@@ -1,0 +1,28 @@
+---
+title: "DATA-607 Lab7 HTML JSON"
+author: "Renan Charles-Pierre"
+date: "2026-10-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+The books that I have chosen for my lab are The Art of Invisiblity by Kevin Mitnick, Sandworm by Andy Greenberg and The Web Application Hackers Handbook by Dafydd Stuttuard and Marcus Pinto. I chose these books by asking a friend for some books they've read recently all related to the same topic. These books are all related to cybersecurity. I will record the title, authors, publication year, genre, and ISBN for each book. I will create my HTML file and JSON file on Visual Studios and then import the data using R. I do not anticipate having too much trouble with this code because I completed a Full Stack Web Development bootcamp last spring so I have worked with both HTML and JSON files. However to import each into R I plan to use the readHTML() method from the RVest package and the fromJSON() method from the Jsonlite package to read the data into my R Markdown file and then I will compare the data after any potential reformatting that may be required.
+
+```{r installing-necessary-packages}
+library(jsonlite)
+library(rvest)
+
+```
+
+
+
+```{r load-datasets-into-r}
+
+```
+
+# Conclusion
