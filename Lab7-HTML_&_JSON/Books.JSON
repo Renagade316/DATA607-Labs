@@ -1,0 +1,28 @@
+[
+    {
+        "Title":"The Art of Invisibilty: The World's Most Famous Hacker Teaches You How to Be Safe in the Age of Big Brother and Big Data",
+        "Authors": "Kevin Mitnick",
+        "Publication Date": "10/10/2019",
+        "Publisher":"Little, Brown Paperbacks",
+        "ISBN":9780316380520
+
+    },
+
+    {
+        "Title":"Sandworm: A New Era of Cyberwar and the Hunt for the Kremlin's Most Dangerous Hackers",
+        "Authors":"Andy Greenberg",
+        "Publication Date":"11/5/2019",
+        "Publisher":"Vintage",
+        "ISBN":9780385544412
+
+    },
+
+    {
+        "Title":"The Web Application Hacker's Handbook: Finding and Exploiting Security Flaws",
+        "Authors":"Dafydd Stuttard, Marcus Pinto",
+        "Publication Date":"9/27/2011",
+        "Publisher":"Wiley",
+        "ISBN":9781118026472
+    }
+
+]
