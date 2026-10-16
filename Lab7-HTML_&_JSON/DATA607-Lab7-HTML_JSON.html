@@ -363,21 +363,105 @@ display: none;
 Kevin Mitnick, Sandworm by Andy Greenberg and The Web Application
 Hackers Handbook by Dafydd Stuttuard and Marcus Pinto. I chose these
 books by asking a friend for some books they’ve read recently all
-related to the same topic. These books are all related to cybersecurity.
-I will record the title, authors, publication year, genre, and ISBN for
-each book. I will create my HTML file and JSON file on Visual Studios
-and then import the data using R. I do not anticipate having too much
-trouble with this code because I completed a Full Stack Web Development
-bootcamp last spring so I have worked with both HTML and JSON files.
-However to import each into R I plan to use the readHTML() method from
-the RVest package and the fromJSON() method from the Jsonlite package to
-read the data into my R Markdown file and then I will compare the data
-after any potential reformatting that may be required.</p>
+related to the same topic. These books are all related to cyber
+security. I will record the title, authors, publication year, genre, and
+ISBN for each book. I will create my HTML file and JSON file on Visual
+Studios and then import the data using R. I do not anticipate having too
+much trouble with this code because I completed a Full Stack Web
+Development bootcamp last spring so I have worked with both HTML and
+JSON files. However to import each into R I plan to use the readHTML()
+method from the RVest package and the fromJSON() method from the
+Jsonlite package to read the data into my R Markdown file and then I
+will compare the data after any potential reformatting that may be
+required.</p>
 <pre class="r"><code>library(jsonlite)
-library(rvest)</code></pre>
+library(rvest)
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>#Loading HTML File, Creating a table from the element with the class name &quot;table&quot;
+html_books &lt;- read_html(&quot;https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Lab7-HTML_%26_JSON/Books.HTML&quot;) |&gt;
+  html_element(&quot;table.books&quot;) |&gt;
+  html_table()
+
+#Changing Date Format
+html_books &lt;- html_books %&gt;% 
+  mutate(`Publication Date` = as.Date(`Publication Date`, format = &quot;%m/%d/%Y&quot;))
+
+#Turning the ISBN&#39;s into numbers
+html_books &lt;- html_books %&gt;% 
+  mutate(ISBN = as.numeric(gsub(&quot;-&quot;, &quot;&quot;, ISBN)))
+
+#Turning the tibble into a data frame
+html_books &lt;- data.frame(html_books)
+
+#Renaming publication date
+html_books &lt;- html_books %&gt;% rename(`Publication Date` = Publication.Date)
+
+#Loading JSON doc
+json_books &lt;- fromJSON(&quot;https://raw.githubusercontent.com/Renagade316/DATA607-Labs/refs/heads/main/Lab7-HTML_%26_JSON/Books.JSON&quot;)
+
+#Removing the row names
+rownames(json_books) &lt;- NULL
+
+#Setting the Date to proper format
+json_books &lt;- json_books %&gt;% 
+  mutate(`Publication Date` = as.Date(`Publication Date`, format = &quot;%m/%d/%Y&quot;))
+
+#Displaying data
+html_books</code></pre>
+<pre><code>##                                                                                                                      Title
+## 1 The Art of Invisibilty: The World&#39;s Most Famous Hacker Teaches You How to Be Safe in the Age of Big Brother and Big Data
+## 2                                    Sandworm: A New Era of Cyberwar and the Hunt for the Kremlin&#39;s Most Dangerous Hackers
+## 3                                             The Web Application Hacker&#39;s Handbook: Finding and Exploiting Security Flaws
+##                         Authors Publication Date                Publisher
+## 1                 Kevin Mitnick       2019-10-10 Little, Brown Paperbacks
+## 2                Andy Greenberg       2019-11-05                  Vintage
+## 3 Dafydd Stuttard, Marcus Pinto       2011-09-27                    Wiley
+##           ISBN
+## 1 9.780316e+12
+## 2 9.780386e+12
+## 3 9.781118e+12</code></pre>
+<pre class="r"><code>json_books</code></pre>
+<pre><code>##                                                                                                                      Title
+## 1 The Art of Invisibilty: The World&#39;s Most Famous Hacker Teaches You How to Be Safe in the Age of Big Brother and Big Data
+## 2                                    Sandworm: A New Era of Cyberwar and the Hunt for the Kremlin&#39;s Most Dangerous Hackers
+## 3                                             The Web Application Hacker&#39;s Handbook: Finding and Exploiting Security Flaws
+##                         Authors Publication Date                Publisher
+## 1                 Kevin Mitnick       2019-10-10 Little, Brown Paperbacks
+## 2                Andy Greenberg       2019-11-05                  Vintage
+## 3 Dafydd Stuttard, Marcus Pinto       2011-09-27                    Wiley
+##           ISBN
+## 1 9.780316e+12
+## 2 9.780386e+12
+## 3 9.781118e+12</code></pre>
+<pre class="r"><code>#Checking if identical
+all.equal(html_books, json_books)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
+<p>In conclusion to create these data sets I created an HTML and Json
+file in Visual Studio Code and then placed both files into the same
+directory at first (later used the raw URL) to load the raw data set
+into R. For HTML I used the RVest package and the read_HTML() method as
+mentioned. I did not realize however, realize that this loaded the whole
+HTML file into the data set, so from there I used the html_element()
+method to find the table whose class I named “table” and then used
+html_table() to create a tibble. For the JSON file I just used the
+jsonlite package and the fromJSON() method to load the data frame.
+Lastly I did some tidying to reformat both data frames and used the
+all.equal method, which returns true if two dataframes and identical and
+false if not, but returns the differences between them to troubleshoot
+the differences until they all.equal returned true. Ultimately my
+previous knowledge of both HTML and Json helped greatly and I did not
+have many challenges or difficulties.</p>
 </div>
 
 
