@@ -1,0 +1,10 @@
+---
+title: "DATA607_Lab9_Ny_Times_API"
+author: "Renan Charles-Pierre"
+format: html
+editor: visual
+---
+
+## Introduction
+
+For Lab9 the New York Times API endpoint that I plan to use to complete this assignment is the Top Stories endpoint. The question that I would like to answer is what are the Top 5 most recent Top Stories. The way I plan on accomplishing this is by the HTTR2 dataset which is recommended for working with modern API's. While not with R specifically, I do have some experience using API's so I do not anticipate having much trouble with this project. I will update my conclusion if there are anything changes.
