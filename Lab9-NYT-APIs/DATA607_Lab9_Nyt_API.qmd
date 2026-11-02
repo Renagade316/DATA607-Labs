@@ -64,7 +64,6 @@ articles_clean <- map_dfr(data, function(article) {
     locations = paste(unlist(article$geo_facet), collapse = ", ")
   )
 })
-articles_clean
 
 articles_clean <- articles_clean %>% mutate(
   published_date = as.Date(published_date)
@@ -73,7 +72,9 @@ articles_clean <- articles_clean %>% mutate(
   updated_date = as.Date(updated_date)
 )
 
+articles_clean <- articles_clean %>% select(section, title, abstract, byline, published_date)
 
+head(articles_clean, n=10)
 ```
 
 ```{r most-recent}
@@ -81,9 +82,9 @@ articles_clean <- articles_clean %>% mutate(
 articles_clean %>%
   arrange(desc(published_date)) %>%
   slice_head(n = 5) %>%
-  select(title, published_date)
+  select(title, byline, published_date)
 ```
 
 # Conclusion 
 
-In conclusion, using an API to get my data set was interisting to work with.
+In conclusion, the endpoint that I chose to use was the Top Stories, specifically the Science endpoint. I stored my api key in a in an renviron file, but committed an example renviron file because that would be used if someone wanted to copy my code. The GET API call was not that difficult to work with, however cleaning the tibble presented a bit of challenge in understanding the format. Since it was a nested JSON object, cleaning was not as straight forward as I was used to. For cleaning, I converted the published date and updated_date into Date variables and provided names for every columns, and lastly I only selected the variables that were necessary, to keep the tibble clean. Ultimately I was able to show the 5 most recently published Science Top Stories.
