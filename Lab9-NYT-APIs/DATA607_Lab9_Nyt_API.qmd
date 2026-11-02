@@ -7,4 +7,83 @@ editor: visual
 
 ## Introduction
 
-For Lab9 the New York Times API endpoint that I plan to use to complete this assignment is the Top Stories endpoint. The question that I would like to answer is what are the Top 5 most recent Top Stories. The way I plan on accomplishing this is by the HTTR2 dataset which is recommended for working with modern API's. While not with R specifically, I do have some experience using API's so I do not anticipate having much trouble with this project. I will update my conclusion if there are anything changes.
+For Lab9 the New York Times API endpoint that I plan to use to complete this assignment is the Top Stories endpoint. The question that I would like to answer is what are the Top 5 most recent Top Stories. The way I plan on accomplishing this is by the HTTR2 data set which is recommended for working with modern API's. While not with R specifically, I do have some experience using API's so I do not anticipate having much trouble with this project. I will update my conclusion if there are anything changes.
+
+```{r }
+install.packages("usethis")
+```
+
+```{r load-packages}
+library(usethis)
+library(httr2)
+library(tidyr)
+library(dplyr)
+library(tidyverse)
+library(purrr)
+library(tibble)
+```
+
+```{r create-env-file}
+usethis::edit_r_environ()
+
+```
+
+```{r get-api-key}
+api_key <- Sys.getenv("MY_API_KEY")
+api_secret <- Sys.getenv("MY_API_SECRET")
+```
+
+```{r web-scrap}
+req <- request("https://api.nytimes.com/svc/topstories/v2/science.json") |> req_url_query('api-key' = api_key)
+
+
+req <-  req_perform(req)
+
+data <- resp_body_json(req)
+data <- data$results
+data[1] <- NULL
+data[2]<- NULL
+data[3] <- NULL
+
+articles <- data$results
+
+articles_clean <- map_dfr(data, function(article) {
+  tibble(
+    section = article$section,
+    subsection = article$subsection,
+    title = article$title,
+    abstract = article$abstract,
+    url = article$url,
+    byline = article$byline,
+    published_date = article$published_date,
+    updated_date = article$updated_date,
+    item_type = article$item_type,
+    keywords = paste(unlist(article$des_facet), collapse = ", "),
+    organizations = paste(unlist(article$org_facet), collapse = ", "),
+    people = paste(unlist(article$per_facet), collapse = ", "),
+    locations = paste(unlist(article$geo_facet), collapse = ", ")
+  )
+})
+articles_clean
+
+articles_clean <- articles_clean %>% mutate(
+  published_date = as.Date(published_date)
+)
+articles_clean <- articles_clean %>% mutate(
+  updated_date = as.Date(updated_date)
+)
+
+
+```
+
+```{r most-recent}
+
+articles_clean %>%
+  arrange(desc(published_date)) %>%
+  slice_head(n = 5) %>%
+  select(title, published_date)
+```
+
+# Conclusion 
+
+In conclusion, using an API to get my data set was interisting to work with.
