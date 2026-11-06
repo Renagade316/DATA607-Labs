@@ -1,0 +1,32 @@
+---
+title: "DATA607-Lab10B-NobelPrize.org"
+author: "Renan Charles-Pierre"
+format: html
+editor: visual
+---
+
+## Approach
+
+This lab is asking to use the API 's from NobelPrize.org and answer 4 data-driven questions using those API's. To first use the NobelPrize APi's an API key is not required so I will not have to create an environ file to store my key and secret. The packages I will use to pull and tidy Nobel Prize data I anticipate using the HTTR2, the TIdyr and the JSONLite packages. All these packages have methods that I can use to read the Nobel Prize data, convert it from a JSON object into a data structure and clean and tidy the data set. The endpoints that I plan on using are the Laureate and Prize.
+
+### Data-Driven Questions:
+
+\
+1. Which Country lost the most Nobel laureates?
+
+-   I plan on using the filter() method to only include results where the bornCountry and the Country columns are different. Then I will create a summary table to count which country has lost the most Nobel laureates
+
+\
+2. Was there was a increase in the loss of laureates during the times of WW1(1914 - 1918) and WW2 (1939 - 1945)
+
+-   I will use my previous filter results from question 1, and filter those results by years and count the total amount of observations between those years. I will also create a graph to show the amount of "lost laureates" every year to track if there were any trends during that time
+
+3\. Out of all the US laureates what category do US winners share the largest percentage of?
+
+-   I will take the data set, filter for only US citizens and calculate the proportion for each category. I will likely use a bar graph to visualize this data.
+
+4\. What country has won the most Nobel Prizes?
+
+-   I will take the dataset and create a summary table to count the amount of nobel prize winners.
+
+## Code Base
