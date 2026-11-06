@@ -1,0 +1,15 @@
+---
+title: "DATA607-Lab10A-Sentiment_Analysis"
+author: "Renan Charles-Pierre"
+format: html
+editor: visual
+---
+
+## Approach
+
+To extend the sentiment analysis example used in Chapter 2 of the *Text Mining with R* textbook, I will start by first reproducing the example code from Chapter 2. I do not anticipate any issues with this as it will be mostly copying and pasting with potential minor tweaks to fit my needs. Then I will extend the analysis in two ways, according to the lab requirements.
+
+1.  Firstly I will use a different text corpus. The corpus I would like to use is Social Media or Tweets specifically (if possible). I thought this would be interesting as the example used in Chapter 2, was for an old book while these lexicons are validated typically with twitter data. So I assume the lagnuage would be a more natural fit. Also since I have not performed any Sentiment analysis before I would like to work with a more modern text corpus. Since I am inexperienced, I may change my text corpus if there are any issues with using Tweet data to something simpler, and I anticipate having some trouble getting everything adjusted because of my lack of experience.
+2.  Lastly I will add an additional sentiment lexicon, which I will likely draw from another R package. I am currently unsure of which lexicon specifically, but I will update my conclusion with my choice when I submit my code base along with any other unforeseen results and challenges.
+
+## Code Base
