@@ -27,6 +27,189 @@ This lab is asking to use the API 's from NobelPrize.org and answer 4 data-drive
 
 4\. What country has won the most Nobel Prizes?
 
--   I will take the dataset and create a summary table to count the amount of nobel prize winners.
+-   I will take the data set and create a summary table to count the amount of nobel prize winners.
 
 ## Code Base
+
+```{r load-packages}
+library(httr2)
+library(jsonlite)
+library(tidyr)
+
+```
+
+```{r API-call}
+req <- request("http://api.nobelprize.org/v1/laureate.json?gender=All")
+resp <- req_perform(req)
+nobel_data <- resp_body_json(resp)
+
+nobel_df <- nobel_data$laureates %>% 
+  tibble(laureates = .) %>%
+  unnest_wider(laureates)
+
+nobel_df <- nobel_df %>% mutate(
+  born = as.Date(born)
+)
+
+nobel_df <- nobel_df %>% mutate(
+  died = as.Date(died)
+)
+
+nobel_df <- nobel_df %>% 
+ unnest_longer(prizes)
+
+nobel_df<- nobel_df %>%
+  unnest_wider(prizes)
+
+nobel_df<- nobel_df %>%
+  unnest_longer(affiliations)
+
+nobel_df<- nobel_df %>%
+  unnest_wider(affiliations)
+
+nobel_df <- nobel_df %>%
+  mutate(year = as.integer(year))
+
+```
+
+## What country has lost the most Laureates?
+
+```{r most-lost-laureates}
+#Filter for laureates with another country
+lost_laureates <- nobel_df %>%
+  filter(
+    !is.na(bornCountryCode),
+    !is.na(country),
+    bornCountry != country
+  )
+
+#Count unique laureates by birth conuntry
+country_losses <- lost_laureates %>%
+  group_by(bornCountry) %>%
+  summarise(
+    total_lost = n_distinct(id),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(total_lost))
+
+country_losses
+
+#The country with the most losses
+country_losses %>%
+  slice_max(total_lost, n = 1)
+
+
+
+
+```
+
+```{r loss-laureates-visualization}
+country_losses %>%
+  slice_max(total_lost, n = 10) %>%
+  ggplot(aes(x = reorder(bornCountry, total_lost),
+             y = total_lost)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Countries by Nobel Laureate Loss",
+    x = "Country of Birth",
+    y = "Number of Laureates"
+  ) +
+  theme_minimal()
+```
+
+It seems that the United Kingdom has lost the most laureates based on this data. However, it is worth noting that the loss of laureates is calculated inaccurately if modern borders are considered. For example, Germany comes in 2nd place with 21 lost laureates but West Germany and Prussia have 5 and 4 lost laureates respectively and both countries are considered part of Germany now, so if those are counted together than Germany would have more lost laureates than the United Kingdom.
+
+## Did the loss of laureates increase during World War I and World War II?
+
+```{r count-laureates}
+loss_by_year <- lost_laureates %>%
+  distinct(id, year) %>%
+  count(year, name = "total_lost") %>%
+  arrange(year)
+
+war_losses <- lost_laureates %>%
+  mutate(
+    period = case_when(
+      year >= 1914 & year <= 1918 ~ "World War I",
+      year >= 1939 & year <= 1945 ~ "World War II",
+      TRUE ~ "Other Years"
+    )
+  ) %>%
+  group_by(period) %>%
+  summarise(
+    total_laureates = n_distinct(id),
+    .groups = "drop"
+  )
+
+war_losses
+```
+
+```{r losses-over-time}
+ggplot(loss_by_year, aes(x = year, y = total_lost)) +
+  annotate(
+    "rect",
+    xmin = 1914, xmax = 1918,
+    ymin = -Inf, ymax = Inf,
+    fill = "blue", alpha = 0.15
+  ) +
+  annotate(
+    "rect",
+    xmin = 1939, xmax = 1945,
+    ymin = -Inf, ymax = Inf,
+    fill = "red", alpha = 0.15
+  ) +
+  geom_line(color = "black") +
+  geom_point(size = 1) +
+  labs(
+    title = "Internationally Affiliated Nobel Laureates by Year",
+    subtitle = "Blue: WWI | Red: WWII",
+    x = "Prize Year",
+    y = "Number of Laureates"
+  ) +
+  theme_minimal()
+```
+
+## Out of all Laureates, which category accounts for the largest percentage?
+
+```{r us-laureates}
+us_laureates <- nobel_df %>%
+  filter(bornCountryCode == "US")
+
+us_categories <- us_laureates %>%
+  distinct(id, category) %>%
+  count(category, name = "total") %>%
+  mutate(
+    percentage = round(total / sum(total) * 100, 2)
+  ) %>%
+  arrange(desc(percentage))
+
+us_categories
+
+ggplot(us_categories,
+       aes(x = reorder(category, percentage),
+           y = percentage)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Distribution of US-Born Nobel Laureates by Category",
+    x = "Nobel Prize Category",
+    y = "Percentage (%)"
+  ) +
+  theme_minimal()
+
+us_categories %>%
+  slice_max(percentage, n = 1)
+```
+
+The data shows that about 28.33% of all laureates given to a United States citizen were in the medicine category.
+
+## What country has won the most Nobel Prizes?
+
+```{r most-nobel-prizes}
+nobel_df %>%
+  count(bornCountry, sort=TRUE)
+
+```
+
+The United States has won the most Nobel Prizes with 299 prizes.
