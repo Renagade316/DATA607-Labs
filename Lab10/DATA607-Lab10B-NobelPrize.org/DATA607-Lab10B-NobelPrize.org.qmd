@@ -123,6 +123,9 @@ It seems that the United Kingdom has lost the most laureates based on this data.
 ## Did the loss of laureates increase during World War I and World War II?
 
 ```{r count-laureates}
+lost_laureates <- lost_laureates %>%
+  mutate(year = as.integer(year))
+
 loss_by_year <- lost_laureates %>%
   distinct(id, year) %>%
   count(year, name = "total_lost") %>%
@@ -170,6 +173,8 @@ ggplot(loss_by_year, aes(x = year, y = total_lost)) +
   theme_minimal()
 ```
 
+It seems that there was an increase in both years, but during WWII there was a much larger increase in the loss of laureates for a born country.
+
 ## Out of all Laureates, which category accounts for the largest percentage?
 
 ```{r us-laureates}
@@ -213,3 +218,7 @@ nobel_df %>%
 ```
 
 The United States has won the most Nobel Prizes with 299 prizes.
+
+# Conclusions:
+
+In working with the API, I had some issues getting the data but I was able to figure it out. Using the unnest_wider() and the unnest_longer() methods to clean and tidy the data set and answering the data driven questions were ways that I was accustomed to. As mentioned in the analysis there were some limitations in answering some of these questions bring about concerns of the accuracy of my results. Namely with the first two questions pertaining loss of laureates.
