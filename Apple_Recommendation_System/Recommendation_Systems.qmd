@@ -1,0 +1,71 @@
+---
+title: "Apple Recommendation Systems"
+author: "Renan Charles-Pierre"
+format: html
+editor: visual
+---
+
+## Apple Music's Recommender Systems
+
+## Introduction:
+
+For this assignment I will be analyzing Apple Music's Recommendation System using Bruce D. Temkin's *Scenario Design* to determine the effectiveness of Apple Music's Recommendations and any areas for improvement. Apple Music is a music streaming platform owned by Apple. I chose Apple Music because I am an avid user of Apple Music and have always been curious as to how it crafts the Home and New Music pages as well as personalize playlist, and radio station recommendations. A few years ago, I had challenged myself to not listen to any other genres of music except Gospel and slowly I saw how certain songs on playlists were played less on shuffle, and how the songs recommended changed as time went on. That personal experience of watching my listening experience change because of my deliberate decision to restrict my listening options is what sparked my original interest in how Apple Music tracks user preferences. It goes beyond just curated playlists and suggestions but shapes what the User Experience as a whole. And with an estimated 88 million monthly subscribers in 2024 (Chartlex, 2026) it is important analyze the Scenario Design from both the business' and the customer's perspectives respectively.
+
+Bruce Temkin's *Scenario Design* is a methodology to how companies can create a favorable user experience according to the business' goals. The business should ask themselves the following questions:\
+1. Who are your Target users?\
+\
+2. What are their key Goals?\
+\
+3. How can you help them achieve their goals?
+
+Target users are real customers and the company should tailor their design to this user's goals and motivations, especially when these goals align to the company's goals.
+
+---
+
+## Scenario Design A:
+
+### Organization's Perspective
+
+**Who are Apple Music's Target Users?**
+
+-   Monthly Subscibers
+
+-   Major-Label artists
+
+-   Independent Artists
+
+**What are their Key Goals and how does Apple Help then achieve these goals?**
+
+| Target User | Primary Goals | How Apple Helps Achieve said Goals |
+|----|----|----|
+| Monthly Subscirbers | Listen to their favorite songs and artists, discover new music, create playlists and receive personalized recommendations | Adding songs to library, play history, feedback features (suggest less, favorite tracks) curated playlists and radio stations. New Music section including chart toppers, trending songs/albums and playlists featuring the hottest new musics |
+| Major-Label Artists | Reach a wide-spread audience, increase streams, promote new releases and maintain consistent audience | Global streaming platform, Popular playlists, Notifying frequent listeners of new releases, Album pre ordering and artist analytics |
+| Independent Artists | Gain exposure, build a fanbase, reach new listeners and increase streams (without major label promotion) | Shazam searches, music distribution, artist analytics and support |
+
+---
+
+## Reverse Engineering Apple Music Recommendation System:
+
+Apple Music continuously fine-tunes its recommendation system by collecting and analyzing data about users' listening habits and preferences. This includes information such as the songs users listen to, how long they listen, their favorite genres, and their search activity (NotNoise Editorial Team, 2026). Apple Music also allows subscribers to actively influence their recommendations through features such as "Favorite" and "Suggest Less," which communicate whether they enjoy particular songs, albums, or artists (Apple, n.d.).
+
+Additionally, Fleming (2025) describes how Apple Music uses machine learning and collaborative filtering to identify patterns in listening behavior and recommend music based on similarities between users' preferences. Apple Music also combines algorithmic recommendations with human-curated playlists to introduce listeners to music they might not otherwise discover. As users continue interacting with the platform, Apple Music can adjust its recommendations to better reflect their evolving musical interests.
+
+## Improvements:
+
+More opportunities for subscriber feedback: While favorite songs and suggest less help tailor preferences they do not tell the full story of a user's preference. For example, every user should be allowed to decide whether they want the music that they are being recommended comes from mostly similar artists within the genres they enjoy, or if they want to discover artists and genres they may have not been exposed to. I know for me as a user, I can grow tired of listening to the same type of music all the time but when I go to look through the Home or New Music pages oftentimes I will only see more music similar to what I listen to rather than artists and genres that i may come to enjoy. Subscribers miss out on music they could have potentially enjoyed when pages are designed to only show familiar music.
+
+More opportunities for exposure for independent artists: While there are heavily promoted playlists visible to many users, these are often difficult for independent artists to be featured on. independent artists recent releases are also typically not featured on in the New Music section. An Emerging Artist or Discovery page could be an opportunity for subscribers to find music that they may enjoy while also giving independent artists access to subscribers they presently do not.
+
+Applying Context to Weighing the User's tracking data. Apple Music keeping track of played history, skips adds a and replays is helpful but these actions can lack context and can disproportionately affect recommendations. There can be many reasons a user skips a song, like it not matching the current mood or preferring to hear another song at that particular moment, but skipping a track can ten make it far less likely to appear at the top of shuffled playlists, or radio play. I think if a user has played a song often in the past, added the song to library or favororited the song, skipping a song should not effectively stop said song from being included in the top of playlists or library or shuffled play.
+
+## References: 
+
+Apple. (n.d.). *Rate and personalize music in Music on Mac*. Apple Support. [https://support.apple.com/guide/music/rate-and-personalize-music-musf7da17c25/mac](https://support.apple.com/guide/music/rate-and-personalize-music-musf7da17c25/mac?utm_source=chatgpt.com)
+
+Chartlex. (2026). *Apple Music discovery algorithm 2026*. [https://www.chartlex.com/blog/streaming/apple-music-discovery-algorithm-2026](https://www.chartlex.com/blog/streaming/apple-music-discovery-algorithm-2026?utm_source=chatgpt.com)
+
+JayNike. (n.d.). *Decoding Apple Music algorithm and how to find your next favorite song*. [https://www.jaynike.com/decoding-apple-music-algorithm-and-how-to-find-your-next-favorite-song](https://www.jaynike.com/decoding-apple-music-algorithm-and-how-to-find-your-next-favorite-song?utm_source=chatgpt.com)
+
+NotNoise. (n.d.). *How Apple Music algorithm works*. [https://notnoise.co/blog/how-apple-music-algorithm-works](https://notnoise.co/blog/how-apple-music-algorithm-works?utm_source=chatgpt.com)
+
+Temkin, B. D. (2004). *Scenario design: A disciplined approach to customer experience*. Forrester Research.
